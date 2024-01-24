@@ -1,0 +1,72 @@
+﻿@page "/Delete/{OrderId}"
+@using BlazorAppCRUD.Data
+@inject Orderservices _employeeService
+@inject NavigationManager NavigationManager
+
+<h2>Delete Employee</h2>
+<hr />
+<h3>Are you sure want to delete this?</h3>
+@if (Oobj == null && Wobj == null && Sobj == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>OrderName</th>
+                <th>Status</th>
+                <th>WindowsName</th>
+                <th>QuantityOfWindows</th>
+                <th>TotalSubElements</th>
+                <th>Element</th>
+                <th>Type</th>
+                <th>Height</th>
+                <th>Width</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Oobj.Name</td>   
+                <td>@Oobj.State</td>
+                <td>@Wobj.Name</td>
+                <td>@Wobj.QuantityOfWindows</td>
+                <td>@Wobj.TotalSubElements</td>
+                <th>@Sobj.Element</th>
+                <th>@Sobj.Type</th>
+                <th>@Sobj.Height</th>
+                <th>@Sobj.Width</th>
+            </tr>
+        </tbody>
+        <div class="form-group">
+            <input type="button" class="btn btn-danger" @onclick="@DeleteEmployee" value="Delete" />
+        </div>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public string OrderId { get; set; }
+    public string WindowId { get; set; }
+    public string SubElementId { get; set; }
+
+    Orders Oobj = new Orders();
+    Windows Wobj = new Windows();
+    SubElements Sobj = new SubElements();
+    protected override async Task OnInitializedAsync()
+    {
+        Oobj = await Task.Run(() => _employeeService.GetOrder(Convert.ToInt32(OrderId)));
+        Wobj = await Task.Run(() => _employeeService.GetWindows(Convert.ToInt32(OrderId)));
+        Sobj = await Task.Run(() => _employeeService.GetSubElement(Convert.ToInt32(OrderId)));
+    }
+    protected async void DeleteEmployee()
+    {
+        await _employeeService.DeleteOrder(Oobj);
+        await _employeeService.DeleteWindow(Wobj);
+        await _employeeService.DeleteSublist(Sobj);
+        NavigationManager.NavigateTo("FetchData");
+        StateHasChanged();
+    }
+
+}

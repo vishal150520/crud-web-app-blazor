@@ -1,0 +1,94 @@
+﻿@page "/EditEmployee/{OrderId}"
+@using BlazorAppCRUD.Data
+@inject Orderservices _OrderServices
+@inject NavigationManager NavigationManager
+
+<h2>Edit Order</h2>
+<hr />
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <input form="Name" class="form-control" @bind="@Oobj.OrderId" />
+            </div>
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input form="Name" class="form-control" @bind="@Oobj.Name" />
+            </div>
+            <div class="form-group">
+                <label for="Name" class="control-label">State</label>
+                <input form="Name" class="form-control" @bind="@Oobj.State" />
+            </div>
+            <div class="form-group">
+                <input form="Name" class="form-control" @bind="@Wobj.WindowId" />
+            </div>
+            <div class="form-group">
+                <label for="Name" class="control-label">Window Name</label>
+                <input form="Name" class="form-control" @bind="@Wobj.Name" />
+            </div>
+            <div class="form-group">
+                <label for="Name" class="control-label">QuantityOfWindows</label>
+                <input form="Name" class="form-control" @bind="@Wobj.QuantityOfWindows" />
+            </div>
+            <div class="form-group">
+                <label for="Name" class="control-label">TotalSubElements</label>
+                <input form="Name" class="form-control" @bind="@Wobj.TotalSubElements" />
+            </div>
+            <div class="form-group">
+                <input form="Name" class="form-control" @bind="@Sobj.SubElementId" />
+            </div>
+            <div class="form-group">
+                <label for="Name" class="control-label">Elements</label>
+                <input form="Name" class="form-control" @bind="Sobj.Element" />
+            </div>
+            <div class="form-group">
+                <label for="Name" class="control-label">Type</label>
+                <input form="Name" class="form-control" @bind="@Sobj.Type" />
+            </div>
+            <div class="form-group">
+                <label for="Name" class="control-label">Height</label>
+                <input form="Name" class="form-control" @bind="@Sobj.Width" />
+            </div>
+            <div class="form-group">
+                <label for="Name" class="control-label">Height</label>
+                <input form="Name" class="form-control" @bind="@Sobj.Height" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@UpdateEmployee" value="Update" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    [Parameter]
+    public string OrderId { get; set; }
+    public string WindowId { get; set; }
+    public string SubElementId{ get; set;}
+
+    Orders Oobj = new Orders();
+    Windows Wobj = new Windows();
+    SubElements Sobj = new SubElements();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Oobj = await Task.Run(() => _OrderServices.GetOrder(Convert.ToInt32(OrderId)));
+        Wobj = await Task.Run(() => _OrderServices.GetWindows(Convert.ToInt32(OrderId)));
+        Sobj = await Task.Run(() => _OrderServices.GetSubElement(Convert.ToInt32(OrderId)));
+    }
+    protected async void UpdateEmployee()
+    {
+        await _OrderServices.Updateorder(Oobj);
+        await _OrderServices.Updatewindow(Wobj);
+        await _OrderServices.Updatesubelement(Sobj);
+        NavigationManager.NavigateTo("FetchData");
+    }
+  
+
+}

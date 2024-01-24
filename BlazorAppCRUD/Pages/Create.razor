@@ -1,0 +1,97 @@
+﻿<!-- OrderForm.razor -->
+@page "/Create"
+@using BlazorAppCRUD.Data
+@inject Orderservices _OrderServices
+@inject NavigationManager NavigationManager
+
+<h3>Order Form</h3>
+
+<EditForm Model="@orderDTO" OnValidSubmit="SaveOrder">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="orderName">Order Name:</label>
+        <InputText id="orderName" @bind-Value="orderDTO.OrderName" class="form-control" />
+        <ValidationMessage For="@(() => orderDTO.OrderName)" />
+    </div>
+
+    <div class="form-group">
+        <label for="state">State:</label>
+        <InputText id="state" @bind-Value="orderDTO.State" class="form-control" />
+        <ValidationMessage For="@(() => orderDTO.State)" />
+    </div>
+    <div class="form-group">
+        <label for="windowName">Window Name:</label>
+        <InputText id="windowName" @bind-Value="orderDTO.WindowName" class="form-control" />
+        <ValidationMessage For="@(() => orderDTO.WindowName)" />
+    </div>
+    <div class="form-group">
+        <label for="quantityOfWindows">Quantity of Windows:</label>
+        <InputNumber id="quantityOfWindows" @bind-Value="orderDTO.QuantityOfWindows" class="form-control" />
+        <ValidationMessage For="@(() => orderDTO.QuantityOfWindows)" />
+    </div>
+
+    <div class="form-group">
+        <label for="totalSubElements">TotalSubElements</label>
+        <InputNumber id="totalSubElements" @bind-Value="orderDTO.TotalSubElements" class="form-control" />
+        <ValidationMessage For="@(() => orderDTO.TotalSubElements)" />
+    </div>
+    <div class="form-group">
+        <label for="totalSubElements">Element</label>
+        <InputNumber id="Element" @bind-Value="orderDTO.Element" class="form-control" />
+        <ValidationMessage For="@(() => orderDTO.Element)" />
+    </div>
+    <div class="form-group">
+        <label for="Type">Type</label>
+        <InputText id="Type" @bind-Value="orderDTO.Type" class="form-control" />
+        <ValidationMessage For="@(() => orderDTO.Type)" />
+    </div>
+    <div class="form-group">
+        <label for="Width">Width</label>
+        <InputNumber id="Width" @bind-Value="orderDTO.Width" class="form-control" />
+        <ValidationMessage For="@(() => orderDTO.Width)" />
+    </div>
+    <div class="form-group">
+        <label for="Height">Height</label>
+        <InputNumber id="Height" @bind-Value="orderDTO.Height" class="form-control" />
+        <ValidationMessage For="@(() => orderDTO.Height)" />
+    </div>
+    <!-- Add fields for SubElement, Element, Type, Width, Height -->
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+
+@code {
+    private OrderDTO orderDTO = new OrderDTO();
+
+    protected async void SaveOrder()
+    {
+        try
+        {
+            if (orderDTO != null)
+            {
+                Orders orders = new Orders();
+                orders.Name = orderDTO.OrderName;
+                orders.State = orderDTO.State;
+                await _OrderServices.InsertOrder(orders);
+
+                Windows windows = new Windows();
+                windows.Name = orderDTO.WindowName;
+                windows.QuantityOfWindows = orderDTO.QuantityOfWindows;
+                windows.TotalSubElements = orderDTO.TotalSubElements;
+                await _OrderServices.InsertWindows(windows);
+
+                SubElements subElements = new SubElements();
+                subElements.Element = orderDTO.Element;
+                subElements.Type = orderDTO.Type;
+                subElements.Width = orderDTO.Width;
+                subElements.Height = orderDTO.Height;
+                await _OrderServices.InsertSubElement(subElements);
+            }
+            NavigationManager.NavigateTo("FetchData");
+        }
+        catch(Exception ee)
+        {
+            throw ee;
+        }
+    }
+}
